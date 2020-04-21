@@ -315,6 +315,8 @@ static unsigned int gre_header_len(uint16 flags)
 	return len;
 	}
 
+
+/*关键入口函数，这里将解析 ip层数据，做一些ip fragment，其次还会做流表管理，创建建立连接的connection 结构体*/
 void NetSessions::DoNextPacket(double t, const Packet* pkt, const IP_Hdr* ip_hdr,
 			       const EncapsulationStack* encapsulation)
 	{
@@ -706,6 +708,7 @@ void NetSessions::DoNextPacket(double t, const Packet* pkt, const IP_Hdr* ip_hdr
 	conn = (Connection*) d->Lookup(h);
 	if ( ! conn )
 		{
+		/* newConn会注册很多东西，这儿关注一下tcp::TCP_Analyzer的注册*/
 		conn = NewConn(h, t, &id, data, proto, ip_hdr->FlowLabel(), pkt, encapsulation);
 		if ( conn )
 			d->Insert(h, conn);

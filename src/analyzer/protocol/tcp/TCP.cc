@@ -1224,6 +1224,8 @@ static int32 update_last_seq(TCP_Endpoint* endpoint, uint32 last_seq,
 	return delta_last;
 	}
 
+/*重点函数，创建新的connection 之后，新的conn 对象中会注册要分析的基本的传输层分析插件，
+tcp 会注册tcp_analyzer,并且后续相关tcp协议的包会进入到此函数中处理*/
 void TCP_Analyzer::DeliverPacket(int len, const u_char* data, bool is_orig,
 					uint64 seq, const IP_Hdr* ip, int caplen)
 	{

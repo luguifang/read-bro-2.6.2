@@ -267,6 +267,7 @@ void Connection::NextPacket(double t, int is_orig,
 		{
 		record_current_packet = record_packet;
 		record_current_content = record_content;
+		/*有顶层的analyzer先处理，然后有调入到各个具体的分析类（DeliverPacket）函数中*/
 		root_analyzer->NextPacket(len, data, is_orig, -1, ip, caplen);
 		record_packet = record_current_packet;
 		record_content = record_current_content;
@@ -397,6 +398,10 @@ void Connection::StatusUpdateTimer(double t)
 			network_time + connection_status_update_interval, 0,
 			TIMER_CONN_STATUS_UPDATE);
 	}
+
+
+/*这个会形成在bro的脚本里使用connection，connection 包含很多字段，bro 可以通过脚本 输出指定的connection 里的值的内容
+就像 conn.log 处理的那样。关键函数*/
 
 RecordVal* Connection::BuildConnVal()
 	{
