@@ -379,6 +379,18 @@ type connection: record {
 
 	## The inner VLAN, if applicable for this connection.
 	inner_vlan: int &optional;
+
+    #art
+    kpi_art: count &optional;
+    # crt
+    kpi_crt: count &optional;
+    #ntr kpi
+    kpi_nrt: count &optional;    
+    #ptt
+    kpi_ptt: count &optional;
+    # srt 
+    kpi_srt: count &optional;
+
 };
 
 ## Default amount of time a file can be inactive before the file analysis

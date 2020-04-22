@@ -196,6 +196,9 @@ private:
 
 	// Whether we have seen the first ACK from the originator.
 	unsigned int seen_first_ACK: 1;
+    // first syn timestamp
+    uint64_t  first_syn_timestamp;
+    uint64_t  kpi_nrt;
 };
 
 class TCP_ApplicationAnalyzer : public analyzer::Analyzer {

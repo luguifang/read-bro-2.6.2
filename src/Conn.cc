@@ -459,6 +459,13 @@ RecordVal* Connection::BuildConnVal()
 
 		}
 
+        conn_val->Assign(11,new Val(0,TYPE_COUNT));
+        conn_val->Assign(12,new Val(0,TYPE_COUNT));
+        conn_val->Assign(13,new Val(0,TYPE_COUNT));
+        conn_val->Assign(14,new Val(0,TYPE_COUNT));
+        conn_val->Assign(15,new Val(0,TYPE_COUNT));
+
+
 	if ( root_analyzer )
 		root_analyzer->UpdateConnVal(conn_val);
 

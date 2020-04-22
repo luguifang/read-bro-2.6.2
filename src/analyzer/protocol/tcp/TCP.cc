@@ -328,6 +328,9 @@ TCP_Analyzer::TCP_Analyzer(Connection* conn)
 	first_packet_seen = 0;
 	is_partial = 0;
 
+    first_syn_timestamp = 0;
+    kpi_nrt = 0;
+
 	orig = new TCP_Endpoint(this, 1);
 	resp = new TCP_Endpoint(this, 0);
 
@@ -1278,6 +1281,13 @@ void TCP_Analyzer::DeliverPacket(int len, const u_char* data, bool is_orig,
 
 	if ( flags.SYN() )
 		{
+          if(!flags.ACK())
+          {
+              if(current_pkt)
+              {
+                first_syn_timestamp = (current_pkt->ts.tv_sec * 1000000 + current_pkt->ts.tv_usec);
+              }
+          }  
 		syn_weirds(flags, endpoint, len);
 		RecordVal* SYN_vals = build_syn_packet_val(is_orig, ip, tp);
 		init_window(endpoint, peer, flags, SYN_vals->Lookup(5)->CoerceToInt(),
@@ -1332,6 +1342,12 @@ void TCP_Analyzer::DeliverPacket(int len, const u_char* data, bool is_orig,
 		      endpoint->state == TCP_ENDPOINT_SYN_SENT) )
 			{
 			seen_first_ACK = 1;
+            
+            if(0 != first_syn_timestamp)
+            {
+                kpi_nrt = (current_pkt->ts.tv_sec * 1000000 + current_pkt->ts.tv_usec) - first_syn_timestamp;
+            }
+
 			Event(connection_first_ACK);
 			}
 
@@ -1443,6 +1459,15 @@ void TCP_Analyzer::UpdateConnVal(RecordVal *conn_val)
 	orig_endp_val->Assign(1, new Val(int(orig->state), TYPE_COUNT));
 	resp_endp_val->Assign(0, new Val(resp->Size(), TYPE_COUNT));
 	resp_endp_val->Assign(1, new Val(int(resp->state), TYPE_COUNT));
+
+
+    int kpi_nrt_idx = connection_type->FieldOffset("kpi_nrt");
+    if(kpi_nrt_idx < 0)
+    {
+        reporter->InternalError("'connection' record missing 'kpi_nrt' field");
+    }
+    // update nrt value
+    conn_val->Assign(kpi_nrt_idx,new Val(kpi_nrt,TYPE_COUNT));
 
 	// Call children's UpdateConnVal
 	Analyzer::UpdateConnVal(conn_val);

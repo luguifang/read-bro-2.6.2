@@ -124,6 +124,13 @@ export {
 		## *uid* values for any encapsulating parent connections
 		## used over the lifetime of this inner connection.
 		tunnel_parents: set[string] &log &optional;
+        
+        # bro kpi nrt
+        kpi_art: count      &log &optional;
+        kpi_crt: count      &log &optional;
+        kpi_nrt: count      &log &optional;
+        kpi_ptt: count      &log &optional;
+        kpi_srt: count      &log &optional;
 	};
 
 	## Event that can be handled to access the :bro:type:`Conn::Info`
@@ -213,6 +220,14 @@ function set_conn(c: connection, eoc: bool)
 	c$conn$ts=c$start_time;
 	c$conn$uid=c$uid;
 	c$conn$id=c$id;
+
+    c$conn$kpi_art=c$kpi_art;
+    c$conn$kpi_crt=c$kpi_crt;
+    c$conn$kpi_nrt=c$kpi_nrt;
+    c$conn$kpi_ptt=c$kpi_ptt;
+    c$conn$kpi_srt=c$kpi_srt;
+
+
 	if ( c?$tunnel && |c$tunnel| > 0 )
 		{
 		if ( ! c$conn?$tunnel_parents )
